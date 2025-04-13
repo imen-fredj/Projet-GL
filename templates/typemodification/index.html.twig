@@ -1,0 +1,127 @@
+{% extends 'baseadmin.html.twig' %}
+
+{% block title %}Types de modification{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="col-lg-10 mx-auto">
+        <div class="card shadow-lg border-0 rounded-lg">
+            <div class="card-header bg-primary text-white">
+                <h3 class="text-center font-weight-light my-2">Types de modification</h3>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-end mb-4">
+                    <a href="{{ path('app_ajoute_modification') }}" class="btn btn-warning">
+                        <i class="fas fa-plus me-2"></i>Ajouter un type
+                    </a>
+                </div>
+
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <p class="mb-0">{{ message | raw }}</p>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped" id="myTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Libellé</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for TypeModification in type %}
+                                <tr>
+                                    <td>{{ TypeModification.id }}</td>
+                                    <td>{{ TypeModification.type }}</td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ TypeModification.id }}">
+                                            <i class="fas fa-trash me-1"></i>Supprimer
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-center">Aucun type de modification trouvé</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer text-center py-3 bg-light">
+                <div class="small">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Gestion des types de modification disponibles pour les demandes
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals de confirmation de suppression -->
+{% for TypeModification in type %}
+<div class="modal fade" id="deleteModal{{ TypeModification.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ TypeModification.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel{{ TypeModification.id }}">Confirmer la suppression</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer le type de modification "<strong>{{ TypeModification.type }}</strong>" ?</p>
+                <p class="text-danger"><small>Cette action est irréversible !</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <a href="{{ path('app_supprimemodification', {'id': TypeModification.id}) }}" class="btn btn-danger">
+                    <i class="fas fa-trash me-1"></i>Supprimer
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<style>
+    .table {
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+    
+    .btn-outline-danger {
+        transition: all 0.3s;
+    }
+    
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .card {
+        border-radius: 10px;
+        border: none;
+    }
+    
+    .card-title {
+        margin-bottom: 0;
+    }
+</style>
+{% endblock %}

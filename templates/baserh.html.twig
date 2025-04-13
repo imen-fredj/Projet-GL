@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Portail RH - Dashboard</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+        <script src="https://kit.fontawesome.com/7946598b52.js" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <style>
+         .profile-btn {
+        padding: 0.375rem 0.75rem;
+        background-color: transparent;
+        border: none;
+        transition: all 0.2s;
+    }
+    
+    .profile-btn:hover {
+        background-color: #f8f9fa;
+        border-radius: 0.5rem;
+    }
+    
+    .profile-avatar img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+    }
+    
+    .profile-menu {
+        min-width: 240px;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        border: none;
+        margin-top: 0.75rem;
+    }
+    
+    .profile-info #nom {
+        font-size: 0.9rem;
+    }
+    .notification-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        position: relative;
+        transition: all 0.2s;
+    }
+    
+    .notification-btn:hover {
+        background-color: #f1f3f5;
+    }
+    
+    .notification-menu {
+        width: 320px;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        border: none;
+        margin-top: 0.75rem;
+    }
+    
+    .notification-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+            #portail {
+                color: #ffa500;
+                font-size: 25px; 
+                font-weight: bold;
+                font-family: Times;
+                margin-left: 20px;
+            }
+            #connexion {
+                padding-right: 20px;
+                font-size: 20px; 
+            }
+            #top-nav {
+                background-color: #F5F5DC;
+                box-shadow: 0 2px 2px -2px rgba(0,0,0,.2);
+                padding: 10px 0;
+            }
+            #sidebar {
+                position: fixed;
+                width: 250px;
+                height: 100%;
+                background-color: #F5F5DC;
+                padding-top: 20px;
+                z-index: 1;
+            }
+            #sidebar .nav-link {
+                color: #333;
+                padding: 15px 20px;
+                font-size: 18px;
+                border-left: 4px solid transparent;
+            }
+            #sidebar .nav-link.active {
+                background-color: rgba(255, 165, 0, 0.1);
+                border-left: 4px solid #ffa500;
+                font-weight: bold;
+            }
+            #sidebar .nav-link:hover {
+                background-color: gold;
+                transition: all 0.3s;
+            }
+            #sidebar .nav-link i {
+                margin-right: 10px;
+                color: #ffa500;
+            }
+            #main-content {
+                margin-left: 250px;
+                padding: 20px;
+            }
+            .notification-badge {
+                position: absolute;
+                top: -5px;
+                right: -5px;
+            }
+            @media (max-width: 768px) {
+                #sidebar {
+                    width: 70px;
+                }
+                #sidebar .nav-link span {
+                    display: none;
+                }
+                #main-content {
+                    margin-left: 70px;
+                }
+            }
+            .sidebar-divider {
+                border-top: 1px solid rgba(0,0,0,0.1);
+                margin: 10px 15px;
+            }
+            .sidebar-heading {
+                color: #6c757d;
+                font-size: 0.8rem;
+                font-weight: bold;
+                text-transform: uppercase;
+                padding: 10px 15px;
+            }
+        </style>
+
+        <nav id="top-nav" class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <h1 id="portail">Portail RH</h1>
+                <div class="ms-auto" id="connexion">
+                    <ul class="navbar-nav">
+                      <!-- Dans votre base.html.twig -->
+<li class="nav-item me-3">
+    <div class="dropdown notification-dropdown">
+        <button class="btn position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-bell fa-lg"></i>
+              {% set notifications = notifications is defined ? notifications : [] %}
+            {% if notifications|length > 0 %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {{ notifications|length }}
+                </span>
+            {% endif %}
+        </button>
+
+        <div class="dropdown-menu dropdown-menu-end shadow p-0 mt-2" style="min-width: 300px;">
+            <h6 class="dropdown-header bg-light py-2 px-3 fw-bold">Notifications</h6>
+            <div class="dropdown-divider m-0"></div>
+            
+            {% for notif in notifications %}
+                <a class="dropdown-item p-3 border-bottom notification-item" 
+                   href="{{ path('notification_read', {'id': notif.id}) }}">
+                    <div class="d-flex align-items-start">
+                        <div class="notification-icon bg-primary-light text-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="notification-content">
+                            <p class="mb-1 fw-semibold">{{ notif.text }}</p>
+                            <span class="small text-muted">{{ notif.dateNotification|date('d/m/Y H:i') }}</span>
+                        </div>
+                    </div>
+                </a>
+            {% else %}
+                <div class="p-3 text-center text-muted">Aucune nouvelle notification</div>
+            {% endfor %}
+        </div>
+    </div>
+</li>
+
+                        <li class="nav-item">
+                    <div class="dropdown profile-dropdown">
+                        <button class="btn profile-btn d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="profile-info me-2 d-none d-md-block">
+                                <p id="nom" class="mb-0 fw-semibold">{{ app.user.prenom }} {{ app.user.nom }}</p>
+                                <small class="text-muted">Ressources Humaines</small>
+                            </div>
+                            <div class="profile-avatar">
+                                <img src="{{ asset('pic/' ~ app.user.image) }}" class="rounded-circle border" alt="{{ app.user.prenom }} {{ app.user.nom }}">
+                            </div>
+                            <i class="fas fa-chevron-down ms-2 small text-muted"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end profile-menu">
+                            <div class="px-4 py-3 border-bottom d-md-none">
+                                <h6 class="text-truncate mb-0">{{ app.user.prenom }} {{ app.user.nom }}</h6>
+                                <small class="text-muted">Ressources Humaines</small>
+                            </div>
+                            <a class="dropdown-item py-2" href="{{ path('app_info_personnel') }}">
+                                <i class="fas fa-user me-2 text-primary"></i> Mon profil
+                            </a>
+                            <a class="dropdown-item py-2" href="#">
+                                <i class="fas fa-cog me-2 text-secondary"></i> Paramètres
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item py-2" href="{{ path('app_logout') }}">
+                                <i class="fas fa-sign-out-alt me-2 text-danger"></i> Se déconnecter
+                            </a>
+                        </div>
+                    </div>
+                </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div id="sidebar">
+            <div class="sidebar-heading">Menu Principal</div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ path('app_homeresponsable') }}">
+                        <i class="fas fa-home"></i>
+                        <span>Accueil</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_home') }}">
+                        <i class="fas fa-users"></i>
+                        <span>Employé</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_compte') }}">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Compte</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_listconge') }}">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Congés</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Documents</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="main-content">
+            {% block body %}{% endblock %}
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
+    </body>
+</html>

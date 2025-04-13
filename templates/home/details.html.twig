@@ -1,0 +1,167 @@
+{% extends 'baserh.html.twig' %}
+
+{% block title %}Détails employé
+{% endblock %}
+
+{% block body %}
+	{% if is_granted('ROLE_Rh') %}
+		<style>
+			.card-employee {
+				border-radius: 10px;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+				margin-bottom: 30px;
+			}
+
+			.page-title {
+				margin-bottom: 30px;
+				font-weight: bold;
+				color: #ffa500;
+				font-family: Times;
+				border-bottom: 2px solid #ffa500;
+				padding-bottom: 10px;
+				display: inline-block;
+			}
+
+			.table-container {
+				background-color: white;
+				border-radius: 10px;
+				padding: 20px;
+			}
+
+			.btn-action {
+				margin-right: 5px;
+				border-radius: 5px;
+				font-size: 14px;
+			}
+
+			.btn-action a {
+				color: inherit;
+				text-decoration: none;
+			}
+
+			.btn-action:hover {
+				transform: translateY(-3px);
+				transition: all 0.2s;
+			}
+
+			.btn-back {
+				color: #6c757d;
+				border-color: #6c757d;
+			}
+
+			.btn-delete {
+				color: #dc3545;
+				border-color: #dc3545;
+			}
+
+			.profile-img {
+				width: 120px;
+				height: 120px;
+				object-fit: cover;
+			}
+		</style>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-12">
+					<h2 class="page-title">Détails de l'employé</h2>
+				</div>
+			</div>
+
+			<div class="row justify-content-center">
+				<div class="col-lg-8">
+					<div class="card card-employee">
+						<div class="card-body table-container">
+							<div class="text-center mb-4">
+								<img src="{{ asset('pic/' ~ Rh.image) }}" class="rounded-circle profile-img shadow" alt="Photo de profil">
+							</div>
+
+							<table class="table table-bordered">
+								<tbody>
+									<tr>
+										<th class="w-25 bg-light">Nom</th>
+										<td>{{ Rh.nom }}</td>
+									</tr>
+									<tr>
+										<th class="bg-light">Prénom</th>
+										<td>{{ Rh.prenom }}</td>
+									</tr>
+									<tr>
+										<th class="bg-light">Adresse</th>
+										<td>{{ Rh.adresse }}</td>
+									</tr>
+									<tr>
+										<th class="bg-light">Téléphone</th>
+										<td>{{ Rh.telephone }}</td>
+									</tr>
+									<tr>
+										<th class="bg-light">CIN</th>
+										<td>{{ Rh.cin }}</td>
+									</tr>
+									<tr>
+										<th class="bg-light">Email</th>
+										<td>{{ Rh.email }}</td>
+									</tr>
+								</tbody>
+							</table>
+
+							<div class="d-flex justify-content-between mt-4">
+								<button type="button" class="btn btn-action btn-back">
+									<a href="{{ path('app_home') }}">
+										<i class="fas fa-arrow-left me-1"></i>
+										Retour
+									</a>
+								</button>
+
+								<div
+									class="btn-group">
+									{# <button type="button" class="btn btn-action btn-edit">
+									                    <a href="{{ path('app_rh_update', {'id': Rh.id}) }}">
+									                      <i class="fas fa-edit me-1"></i> Modifier
+									                    </a>
+									                  </button> #}
+									<button type="button" class="btn btn-sm btn-action btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal" data-url="{{ path('app_rh_delete', {'id': Rh.id}) }}">
+										<i class="fas fa-trash me-1"></i>
+										Supprimer
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<form method="post" id="deleteForm">
+						<div class="modal-header">
+							<h5 class="modal-title" id="deleteModalLabel">Confirmer la suppression</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+						</div>
+						<div class="modal-body">
+							<p>Êtes-vous sûr de vouloir supprimer cet employé ? Cette action est irréversible.</p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+							<input type="hidden" name="_token" id="csrfTokenField" value="">
+							<button type="submit" class="btn btn-danger">Supprimer</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<script>
+
+			document.addEventListener('DOMContentLoaded', function () {
+const deleteModal = document.getElementById('deleteModal');
+deleteModal.addEventListener('show.bs.modal', function (event) {
+const button = event.relatedTarget;
+const deleteUrl = button.getAttribute('data-url');
+document.getElementById('deleteForm').action = deleteUrl;
+});
+});
+		</script>
+	{% endif %}
+{% endblock %}
