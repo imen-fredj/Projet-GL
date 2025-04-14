@@ -1,0 +1,20 @@
+# config/services.yaml
+services:
+  _defaults:
+        autowire: true
+        autoconfigure: true
+        
+  App\Observer\NotificationSubscriber:
+    arguments: ["@doctrine.orm.entity_manager"]
+    tags: ["app.conge_subscriber"]
+
+  App\Observer\LoggingSubscriber:
+    tags: ["app.conge_subscriber"]
+
+  App\Command\TestObserverCommand:
+    arguments:
+      $em: "@doctrine.orm.entity_manager"
+    tags: [console.command]
+
+  App\Repository\RhRepository:
+    tags: [doctrine.repository_service]
