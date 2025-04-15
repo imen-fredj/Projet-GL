@@ -29,6 +29,9 @@ class AvanceSalaire
     #[ORM\JoinColumn(nullable: false)]
     private ?Rh $Rh = null;
 
+
+    
+
     public function getId(): ?int
     {
         return $this->id;

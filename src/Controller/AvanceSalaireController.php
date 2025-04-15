@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\AvanceSalaireRepository;
 use App\Entity\AvanceSalaire;
+use App\Entity\Notification;
+use App\Repository\NotificationRepository;
 use Symfony\Component\HttpFoundation\Request; 
 class AvanceSalaireController extends AbstractController
 {
@@ -21,12 +23,22 @@ class AvanceSalaireController extends AbstractController
             'salaire' => $avance,
         ]);
     }
+
+    #[Route('/listavance', name: 'app_listavance')]
+public function indexAvance(AvanceSalaireRepository $AvanceSalaireRepository): Response
+{
+    $avances = $AvanceSalaireRepository->findAll();
+    return $this->render('avance_salaire/indexRh.html.twig', [
+        'avances' => $avances,
+    ]);
+}
      /**
      * @Route("/ajouteavance", name="app_avance")
      */
     public function ajouter(\Symfony\Component\HttpFoundation\Request $request): Response
     {   
           $avance=new AvanceSalaire();
+          
             $avance->setDatedemande(new \DateTime());
             $avance->setEtat('en cours');
              $avance->setRh($user = $this->getUser());
@@ -81,5 +93,56 @@ class AvanceSalaireController extends AbstractController
     [
         'for'=>$form->createView()
     ]);
+}
+ /**
+ * @Route("/accepte_avance/{id}", name="avance_accepte")
+ */
+public function accepteravance($id, EntityManagerInterface $manager): Response
+{
+    $avance = $this->getDoctrine()->getRepository(AvanceSalaire::class)->find($id);
+
+    if ($avance && $avance->getEtat() == 'en cours') {
+        $avance->setEtat('Confirmer');
+        $notification = new Notification();
+  
+        // Vérifiez qui est le demandeur
+        $employeDemandeur = $avance->getRh();
+        $notification->setRecepteur($employeDemandeur);
+        $responsable = $this->getUser();
+
+        
+       
+        $notification->setText("Demande d'avance sur salaire a été acceptée.");
+        $notification->setDateNotification(new \DateTime());
+       
+        $notification->setDestinateur($responsable);
+        $notification->setIsRead(0);
+
+        $manager->persist($avance);
+        $manager->persist($notification);
+        $manager->flush();
+    }
+
+    return $this->redirectToRoute('app_listavance');
+}
+/**
+ * @Route("/refuse_avance/{id}", name="avance_refuse")
+ */
+public function refuseravance($id, EntityManagerInterface $manager): Response
+{
+    // Trouver l'avance par son ID
+    $avance = $this->getDoctrine()->getRepository(AvanceSalaire::class)->find($id);
+
+    // Si l'avance existe et que son état est "en cours", on la marque comme refusée
+    if ($avance && $avance->getEtat() == 'en cours') {
+        $avance->setEtat('rejeter');
+
+       
+        $manager->persist($avance);
+        $manager->flush();
+    }
+
+    // Redirection après le refus
+    return $this->redirectToRoute('app_listavance');
 }
 }

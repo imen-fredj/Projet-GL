@@ -1,142 +1,149 @@
-
 {% extends 'baseEmp.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Demande de modification personnel{% endblock %}
 
 {% block body %}
-  
 <style>
-#page{     
-         margin-top:40px;     
-      }
-      #rech{     
-         margin-bottom:40px;     
-      }
-       #recherch{     
-        text-align: center; 
- 
-      }
-      #titre{     
-         margin-bottom:40px;
-               font-weight: bold;
-          color:#FF8C00;
-          text-decoration: underline ;
-           font-family: Times ;
-      }
-        #btn{     
-        margin-left:90px;
-        width:130px;
-        background-color: 	#F5F5DC;
-        
-      }
+	.page-title {
+		margin-bottom: 30px;
+		font-weight: bold;
+		color: #FF8C00;
+		font-family: Times;
+		border-bottom: 2px solid #FF8C00;
+		padding-bottom: 10px;
+		display: inline-block;
+	}
+
+	.btn-add {
+		background-color: #F5F5DC;
+		border: 1px solid #FF8C00;
+		color: #333;
+		transition: all 0.3s;
+	}
+
+	.btn-add:hover {
+		background-color: #FF8C00;
+		color: white;
+	}
+
+	.table-container {
+		background-color: white;
+		border-radius: 10px;
+		padding: 20px;
+		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+		margin-top: 20px;
+	}
+
+	.table th {
+		background-color: #f8f9fa;
+		font-weight: 600;
+	}
+
+	.table img {
+		width: 40px;
+		height: 40px;
+		object-fit: cover;
+		border-radius: 50%;
+	}
+
+	.status-en-cours {
+		color: #FFA500;
+		font-weight: bold;
+	}
+
+	.status-accepte {
+		color: #28a745;
+		font-weight: bold;
+	}
+
+	.status-refuse {
+		color: #dc3545;
+		font-weight: bold;
+	}
+
+	.btn-sm {
+		padding: 0.25rem 0.5rem;
+		font-size: 0.875rem;
+		border-radius: 0.2rem;
+	}
+
+	.btn-warning {
+		background-color: #ffc107;
+		border-color: #ffc107;
+		color: #212529;
+	}
+
+	.btn-warning:hover {
+		background-color: #e0a800;
+		border-color: #d39e00;
+	}
+
+	.btn-danger {
+		background-color: #dc3545;
+		border-color: #dc3545;
+	}
+
+	.btn-danger:hover {
+		background-color: #c82333;
+		border-color: #bd2130;
+	}
 </style>
- <center> 
- <div class="col-lg-10 mb-5 mb-lg-0 position-relative" id="page">
-        <div id="radius-shape-1" class="position-absolute rounded-circle shadow-5-strong"></div>
-        <div id="radius-shape-2" class="position-absolute shadow-5-strong"></div>
 
-        <div class="card bg-glass">
-          <div class="card-body px-4 py-5 px-md-5">
-         <div class="input-group">
-  <div  id="rech"class="input-group rounded">
- 
+<div class="container mt-4">
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<h2 class="page-title">Demande de modification personnel</h2>
+		<a href="{{ path('app_ajoutemodification') }}" class="btn btn-add">
+			<i class="fas fa-plus me-2"></i> Ajouter une demande
+		</a>
+	</div>
+
+	{% for label, messages in app.flashes %}
+		{% for message in messages %}
+			<div class="alert alert-{{ label }} alert-dismissible fade show m-3" role="alert">
+				{{ message }}
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		{% endfor %}
+	{% endfor %}
+
+	<div class="card table-container">
+		<table class="table table-striped table-hover align-middle" id="myTable">
+			<thead class="table-light">
+				<tr>
+					<th>Image</th>
+					<th>CIN</th>
+					<th>Nom</th>
+					<th>Prénom</th>
+					<th>Date demande</th>
+					<th>Type</th>
+					<th>Statut</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for ModificationInformation in information %}
+					<tr>
+						<td>
+							<img src="{{ asset('pic/' ~ ModificationInformation.Rh.image) }}" alt="Employé">
+						</td>
+						<td>{{ ModificationInformation.Rh.cin }}</td>
+						<td>{{ ModificationInformation.Rh.nom }}</td>
+						<td>{{ ModificationInformation.Rh.prenom }}</td>
+						<td>{{ ModificationInformation.datedemande|date("d/m/Y") }}</td>
+						<td>{{ ModificationInformation.TypeModification.type }}</td>
+						<td class="status-{{ ModificationInformation.libelle|lower }}">{{ ModificationInformation.libelle }}</td>
+						<td>
+							<a href="{{ path('app_modifier_information', {'id': ModificationInformation.id}) }}" class="btn btn-warning btn-sm me-2" title="Modifier">
+								<i class="fas fa-edit"></i>
+							</a>
+							{# <a href="{{ path('app_supprime_information', {'id': ModificationInformation.id}) }}" class="btn btn-danger btn-sm" title="Supprimer">
+								<i class="fas fa-trash-alt"></i>
+							</a> #}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
 </div>
-
-            <form>
-            
-            <h2 id="titre">Demande une Modification personnel :
-            <button type="button"  id="btn" class="btn btn-outline-secondary btn-fw"><a href="{{path('app_ajoutemodification')}}">Ajouter</a></button>  </h2>  
-            
-             <table class="table table-striped" id="myTable">
- 
-             
-                      <thead>
-                        <tr>
-                         <th>
-                         Image
-                          </th>
-                         <th>
-                          CIN
-                          </th>
-                          <th>
-                          Nom
-                          </th>
-                          <th>
-                            Prenom
-                          </th>
-                          <th>
-                           date_demande
-                          </th>
-                          <th>
-                          type
-                          </th>
-                           <th>
-                            Statut
-                          </th>
-                           <th>
-                            Actions
-                          </th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                      {% for ModificationInformation in information  %}
-                     
-                        <tr>
-                         <td>
-                         <img src="{{asset('pic/' ~ ModificationInformation.Rh.image) }}" class="rounded-circle"
-                                alt="" style="width:40px; height: 40px ">
-                          </td>
-                          <td>
-                          {{ ModificationInformation.Rh.cin}}
-                          </td>
-                             
-                          <td>
-                            {{ ModificationInformation.Rh.nom}}
-                          </td>
-                          <td>
-                          {{ ModificationInformation.Rh.prenom}}
-                          </td>
-                             
-                           <td >
-                         {{ModificationInformation.datedemande|date("d/m/Y ", false)}}
-                          </td>
-                           <td>
-                          {{ ModificationInformation.TypeModification.type}}
-                          </td>
-                           <td >
-                         {{ModificationInformation.libelle}}
-                          </td>
-                            <td>
-                          {{ ModificationInformation.etat}}
-                          </td>
-                           <td>
-                           <button type="button" class="btn btn-outline-success btn-fw"><a href="{{path('app_modifier_information',{'id':ModificationInformation.id})}}">Modifier</a></button></td>
-                          <td>
-                           <button type="button" class="btn btn-outline-danger btn-fw"><a href="{{path('app_supprime_information',{'id':ModificationInformation.id})}}">Supprimer</a></button></td>
-                          
-                           
-                          
-                          </td>
-                        </tr >
-                     
-                  
-                        {% endfor %}
-
-                         
-                   
-                       
-                      {# {{ knp_pagination_render(personne) }} #}
-                        
-                      </tbody>
-                    </table>
-             
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-</center>
-</form>
-
-  
 {% endblock %}

@@ -1,49 +1,103 @@
 {% extends 'baseEmp.html.twig' %}
 
-{% block title %}Demande Accompte{% endblock %}
+{% block title %}Demande Avance Salaire{% endblock %}
 
 {% block body %}
 <style>
-#page{
-         margin-top:80px; 
-      }
-      #titre{     
-         margin-bottom:40px;
-               font-weight: bold;
-          color:#FF8C00;
-          text-decoration: underline ;
-           font-family: Times ;
-      }
+    .page-title {
+        margin-bottom: 15px;
+        font-weight: bold;
+        color: #FF8C00;
+        font-family: Times;
+        border-bottom: 2px solid #FF8C00;
+        padding-bottom: 10px;
+        display: inline-block;
+    }
+
+    .form-container {
+        background-color: white;
+        border-radius: 8px;
+        padding: 25px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-top: 25px;
+    }
+
+    .form-control-lg {
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+        transition: border-color 0.3s;
+    }
+
+    .form-control-lg:focus {
+        border-color: #FF8C00;
+        box-shadow: 0 0 0 0.25rem rgba(255, 140, 0, 0.25);
+    }
+
+    .btn-submit {
+        background-color: #FF8C00;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .btn-submit:hover {
+        background-color: #e67e00;
+        transform: translateY(-2px);
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 6px;
+    }
+
+    .bg-glass {
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        backdrop-filter: blur(10px);
+    }
 </style>
-<center>
-<div class="col-lg-6 mb-5 mb-lg-0 position-relative" id="page">
-        <div id="radius-shape-1" class="position-absolute rounded-circle shadow-5-strong"></div>
-        <div id="radius-shape-2" class="position-absolute shadow-5-strong"></div>
 
-        <div class="card bg-glass">
-          <div class="card-body px-4 py-5 px-md-5">
-            <h1 id="titre">Demande Avance salaire</h1>
-          {{ form_start(for) }}
-         
-           
-            
-               <div  class="form-outline mb-4">
-                  {{ form_row(for.montant, { 'attr': {'class': ' form-control form-control-lg'}}) }}
-              </div>
-              
-              <div  class="form-outline mb-4">
-                  {{ form_row(for.date_avance, { 'attr': {'class': ' form-control form-control-lg'}}) }}
-              </div>
-              
-               <button type="submit" class="btn btn-warning btn-block mb-4" >
-               ajouter
-              </button>
-              {{ form_end(for) }}
-            
-          </div>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <h1 class="page-title text-center">Demande Avance Salaire</h1>
+
+            <div class="card form-container bg-glass">
+                <div class="card-body">
+                    {{ form_start(for, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate', 'id': 'avanceForm'}}) }}
+
+                    <div class="mb-4">
+                        {{ form_row(for.montant, {
+                            'attr': {
+                                'class': 'form-control form-control-lg',
+                                'placeholder': 'Montant de l\'avance'
+                            }
+                        }) }}
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form_row(for.date_avance, {
+                            'attr': {
+                                'class': 'form-control form-control-lg',
+                                'placeholder': 'JJ/MM/AAAA'
+                            }
+                        }) }}
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-submit btn-lg">
+                            <i class="fas fa-paper-plane me-2"></i> Envoyer la demande
+                        </button>
+                    </div>
+
+                    {{ form_end(for) }}
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-</center>
-
+</div>
 {% endblock %}

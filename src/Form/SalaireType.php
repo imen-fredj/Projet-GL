@@ -20,7 +20,15 @@ class SalaireType extends AbstractType
                 )))
 
             ->add('date_avance', DateType::class, ['widget' => 'choice',
-            
+            'widget' => 'single_text',
+            'html5' => true,
+            'attr' => [
+                'class' => 'form-control form-control-lg datepicker',
+                'min' => (new \DateTime())->format('Y-m-d'),
+            ],
+            'label' => 'Date de début',
+            'label_attr' => ['class' => 'form-label'],
+            'format' => 'yyyy-MM-dd',
             ])
        
         ;
