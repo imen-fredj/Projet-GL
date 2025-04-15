@@ -72,15 +72,9 @@ public function ajouter(Request $request, EntityManagerInterface $manager, Notif
         return $this->redirectToRoute('app_conge');
     }
 
-    // Récupérer les notifications pour l'utilisateur
-    $notifications = $notificationRepository->findBy([
-        'recepteur' => $this->getUser(),
-        'isRead' => false
-    ], ['dateNotification' => 'DESC'], 10);
 
     return $this->render('conge/demande.html.twig', [
-        'form' => $form->createView(),
-        'notifications' => $notifications
+        'for' => $form->createView(),
     ]);
 }
     /**

@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomeresponsableController extends AbstractController
 {
     #[Route('/homeresponsable', name: 'app_homeresponsable')]
-    public function index(CongeRepository $CongeRepository,NotificationRepository $notificationRepository): Response
+    public function index(CongeRepository $CongeRepository): Response
     {  $conge=$CongeRepository->countbydate();
         $congedate=[];
         $congecount=[];
@@ -21,14 +21,10 @@ class HomeresponsableController extends AbstractController
             $congecount[]=$cg['count'];
            
              }
-             $notifications = $notificationRepository->findBy([
-                'recepteur' => $this->getUser(),
-            ], ['dateNotification' => 'DESC'], 10);
-            
+             
         return $this->render('homeresponsable/index.html.twig', [
             'congedate'=>json_encode($congedate),
             'congecount'=>json_encode($congecount),
-          'notifications' => $notifications
         ]);
     }
 }
