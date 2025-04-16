@@ -25,6 +25,7 @@ class AvanceSalaireController extends AbstractDemandeController
         return 'avance_salaire/index.html.twig';
     }
     
+
     protected function getEntityContextName(): string
     {
         return 'salaire';
@@ -158,22 +159,15 @@ protected function updateEntityOnReject($entity, string $rejectedState, EntityMa
 
 protected function createRejectionNotification($entity, EntityManagerInterface $manager): void
 {
-    // No notification needed for rejection of avance (matches your original code)
-    // If you later need notifications for rejections, implement them here
 }
 
-/**
- * Implement the missing abstract method
- */
 protected function getEntityClass(): string
 {
     return AvanceSalaire::class;
 }
 protected function preEditPersist($entity, EntityManagerInterface $em): void
 {
-    // Add any pre-persistence logic for AvanceSalaire here
-    // For example:
-    // $entity->setUpdatedAt(new \DateTime());
+
 }
 
 }

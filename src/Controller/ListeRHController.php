@@ -26,6 +26,7 @@ class ListeRHController extends AbstractController
      * @Route("/supprimer/{id}" , name="app_supprime")
      */
 
+
     function supprimer($id):Response
     {
         $repo=$this->getDoctrine()->getRepository(Rh::class );

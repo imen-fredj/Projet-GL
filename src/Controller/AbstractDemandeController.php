@@ -135,7 +135,11 @@ abstract class AbstractDemandeController extends AbstractController
         );
     }
 
-
+     // Méthodes abstraites obligatoire
+     abstract protected function createNewEntity();
+     abstract protected function getFormType(): string;
+     abstract protected function getFormTemplate(): string;
+     
 
     //////////////////// Template Method pour la modification //////////////////////////
     final protected function handleEdit(Request $request, $id, string $redirectRoute): Response 
@@ -169,6 +173,7 @@ abstract class AbstractDemandeController extends AbstractController
         ]);
     }
 
+    
       
 
 
@@ -187,12 +192,7 @@ abstract class AbstractDemandeController extends AbstractController
     //     return $this->redirectToRoute($redirectRoute);
     // }
 
-     // Méthodes abstraites obligatoire
-     abstract protected function createNewEntity();
-     abstract protected function getFormType(): string;
-     abstract protected function getFormTemplate(): string;
-     abstract protected function getEntityClass(): string;
-     
+
      // Hooks avec implémentation par défaut 
      protected function postEditSuccess($entity, Request $request): void {}
      protected function initNewEntity($entity): void {
@@ -229,37 +229,40 @@ abstract class AbstractDemandeController extends AbstractController
         return false;
     }
 
+    abstract protected function getEntityClass(): string;
+
+
     // Hooks optionnels
-    protected function prePersistAccept($entity, EntityManagerInterface $em): void {}
-    protected function postPersistAccept($entity, EntityManagerInterface $em): void {}
-    protected function prePersistRefuse($entity, EntityManagerInterface $em): void {}
-    protected function postPersistRefuse($entity, EntityManagerInterface $em): void {}
-    protected function preDelete($entity, EntityManagerInterface $em): void {}
-    protected function postDelete($entity, EntityManagerInterface $em): void {}
+    protected function preEditPersist($entity, EntityManagerInterface $em): void {}
+    // protected function postPersistAccept($entity, EntityManagerInterface $em): void {}
+    // protected function prePersistRefuse($entity, EntityManagerInterface $em): void {}
+    // protected function postPersistRefuse($entity, EntityManagerInterface $em): void {}
+    // protected function preDelete($entity, EntityManagerInterface $em): void {}
+    // protected function postDelete($entity, EntityManagerInterface $em): void {}
     protected function postFormProcess($entity, EntityManagerInterface $em): void {}
 
     // Helper pour les notifications
-    protected function createNotification(
-        $relatedEntity,
-        EntityManagerInterface $em,
-        string $text,
-        $receiver,
-        $sender
-    ): void {
-        $notification = new Notification();
-        $notification->setText($text);
-        $notification->setDateNotification(new \DateTime());
-        $notification->setRecepteur($receiver);
-        $notification->setDestinateur($sender);
-        $notification->setIsRead(0);
+//     protected function createNotification(
+//         $relatedEntity,
+//         EntityManagerInterface $em,
+//         string $text,
+//         $receiver,
+//         $sender
+//     ): void {
+//         $notification = new Notification();
+//         $notification->setText($text);
+//         $notification->setDateNotification(new \DateTime());
+//         $notification->setRecepteur($receiver);
+//         $notification->setDestinateur($sender);
+//         $notification->setIsRead(0);
 
-        // Relation spécifique selon l'entité
-        if ($relatedEntity instanceof Conge) {
-            $notification->setConge($relatedEntity);
-        } elseif ($relatedEntity instanceof AvanceSalaire) {
-            $notification->setAvanceSalaire($relatedEntity);
-        }
+//         // Relation spécifique selon l'entité
+//         if ($relatedEntity instanceof Conge) {
+//             $notification->setConge($relatedEntity);
+//         } elseif ($relatedEntity instanceof AvanceSalaire) {
+//             $notification->setAvanceSalaire($relatedEntity);
+//         }
 
-        $em->persist($notification);
-    }
+//         $em->persist($notification);
+//     }
 }

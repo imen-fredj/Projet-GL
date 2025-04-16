@@ -69,9 +69,6 @@ class ModifInformationController extends AbstractDemandeController
     // In ModifInformationController.php
 protected function preEditPersist($entity, EntityManagerInterface $em): void
 {
-    // Add any pre-save logic here (e.g., update timestamps)
-    // Example:
-    // $entity->setUpdatedAt(new \DateTime());
 }
 
     // Unused but required methods (for acceptance/rejection flows)
