@@ -302,48 +302,7 @@
         <div id="portail">Portail RH</div>
 
         <div class="d-flex align-items-center">
-            <!-- Notifications -->
-            <div class="dropdown me-3">
-                <button class="btn notification-btn position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-bell"></i>
-                    {% if notification is defined and notification|length > 0 %}
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            {{ notification|length }}
-                            <span class="visually-hidden">nouvelles notifications</span>
-                        </span>
-                    {% endif %}
-                </button>
-                <div class="dropdown-menu dropdown-menu-end notification-menu p-0">
-                    <div class="notification-header">
-                        <h6 class="mb-0 fw-bold">Notifications</h6>
-                    </div>
-                    <div class="notification-list">
-                        {% for Notification in notification|default([]) %}
-                            <a class="dropdown-item p-3 border-bottom notification-item" href="#">
-                                <div class="d-flex">
-                                    <div class="notification-icon bg-primary-light text-primary rounded-circle">
-                                        <i class="fas fa-envelope"></i>
-                                    </div>
-                                    <div class="notification-content">
-                                        <p class="mb-1 fw-semibold">{{ Notification.text }}</p>
-                                        <span class="small text-muted">{{ Notification.dateNotification|date("d/m/Y") }}</span>
-                                    </div>
-                                </div>
-                            </a>
-                        {% else %}
-                            <div class="p-3 text-center text-muted">
-                                <i class="fas fa-bell-slash mb-2"></i>
-                                <p class="mb-0">Aucune notification</p>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    {% if notification is defined and notification|length > 0 %}
-                        <div class="notification-footer">
-                            <a href="#" class="small fw-semibold text-decoration-none">Voir toutes les notifications</a>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
+          
         
 
             <!-- Profil -->
@@ -363,7 +322,7 @@
                         <h6 class="text-truncate mb-0">{{ app.user.prenom }} {{ app.user.nom }}</h6>
                         <small class="text-muted">{% if app.user.roles is defined and 'ROLE_RH' in app.user.roles %}Ressources Humaines{% else %}Employé{% endif %}</small>
                     </div>
-                    <a class="dropdown-item" href="{{ path('app_info_personnel') }}">
+                    <a class="dropdown-item" href="">
                         <i class="fas fa-user me-2 text-primary"></i> Mon profil
                     </a>
                     <a class="dropdown-item" href="#">
@@ -397,13 +356,13 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if app.request.get('_route') == 'app_compte' %}active{% endif %}" href="{{ path('app_compte') }}">
+                    <a class="nav-link {% if app.request.get('_route') == 'app_compte' %}active{% endif %}" href="">
                         <i class="fas fa-user-cog"></i>
                         <span>Comptes</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if app.request.get('_route') == 'app_listconge' %}active{% endif %}" href="{{ path('app_listconge') }}">
+                    <a class="nav-link {% if app.request.get('_route') == 'app_listconge' %}active{% endif %}" href="">
                         <i class="fas fa-calendar-alt"></i>
                         <span>Gestion des congés</span>
                     </a>
@@ -417,19 +376,19 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if app.request.get('_route') == 'app_conge' %}active{% endif %}" href="{{ path('app_conge') }}">
+                    <a class="nav-link {% if app.request.get('_route') == 'app_conge' %}active{% endif %}" href="">
                         <i class="fas fa-calendar-alt"></i>
                         <span>Demande congés</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if app.request.get('_route') == 'app_avance_salaire' %}active{% endif %}" href="{{ path('app_avance_salaire') }}">
+                    <a class="nav-link {% if app.request.get('_route') == 'app_avance_salaire' %}active{% endif %}" href="">
                         <i class="fas fa-money-bill-wave"></i>
                         <span>Avance du salaire</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if app.request.get('_route') == 'app_modif_information' %}active{% endif %}" href="{{ path('app_modif_information') }}">
+                    <a class="nav-link {% if app.request.get('_route') == 'app_modif_information' %}active{% endif %}" href="">
                         <i class="fas fa-user-edit"></i>
                         <span>Modification info</span>
                     </a>

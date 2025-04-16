@@ -53,11 +53,10 @@ class Rh implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $telephone = null;
 
-    #[ORM\OneToMany(mappedBy: 'destinateur', targetEntity: Notification::class)]
-    private Collection $notifications;
+   
     public function __construct()
     {
-        $this->notifications = new ArrayCollection();
+       
     }
 
     public function getId(): ?int
@@ -233,34 +232,10 @@ class Rh implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
     public function isActive(): bool
-{
-    return $this->active === '1'; // ou (bool)$this->active selon votre besoin
-}
+    {
+        return $this->active === 'True'; // Comparaison insensible à la casse
+    }
 
   
 
-public function getNotifications(): Collection
-{
-    return $this->notifications;
-}
-
-public function addNotification(Notification $notification): self
-{
-    if (!$this->notifications->contains($notification)) {
-        $this->notifications->add($notification);
-        $notification->setRecepteur($this);
-    }
-    return $this;
-}
-
-public function removeNotification(Notification $notification): self
-{
-    if ($this->notifications->removeElement($notification)) {
-        // set the owning side to null (unless already changed)
-        if ($notification->getRecepteur() === $this) {
-            $notification->setRecepteur(null);
-        }
-    }
-    return $this;
-}
 }

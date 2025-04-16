@@ -156,41 +156,6 @@
                 <div class="ms-auto" id="connexion">
                     <ul class="navbar-nav">
                       <!-- Dans votre base.html.twig -->
-<li class="nav-item me-3">
-    <div class="dropdown notification-dropdown">
-        <button class="btn position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="fas fa-bell fa-lg"></i>
-              {% set notifications = notifications is defined ? notifications : [] %}
-            {% if notifications|length > 0 %}
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    {{ notifications|length }}
-                </span>
-            {% endif %}
-        </button>
-
-        <div class="dropdown-menu dropdown-menu-end shadow p-0 mt-2" style="min-width: 300px;">
-            <h6 class="dropdown-header bg-light py-2 px-3 fw-bold">Notifications</h6>
-            <div class="dropdown-divider m-0"></div>
-            
-            {% for notif in notifications %}
-                <a class="dropdown-item p-3 border-bottom notification-item" 
-                   href="{{ path('notification_read', {'id': notif.id}) }}">
-                    <div class="d-flex align-items-start">
-                        <div class="notification-icon bg-primary-light text-primary rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                            <i class="fas fa-calendar-alt"></i>
-                        </div>
-                        <div class="notification-content">
-                            <p class="mb-1 fw-semibold">{{ notif.text }}</p>
-                            <span class="small text-muted">{{ notif.dateNotification|date('d/m/Y H:i') }}</span>
-                        </div>
-                    </div>
-                </a>
-            {% else %}
-                <div class="p-3 text-center text-muted">Aucune nouvelle notification</div>
-            {% endfor %}
-        </div>
-    </div>
-</li>
 
                         <li class="nav-item">
                     <div class="dropdown profile-dropdown">
@@ -209,7 +174,7 @@
                                 <h6 class="text-truncate mb-0">{{ app.user.prenom }} {{ app.user.nom }}</h6>
                                 <small class="text-muted">Ressources Humaines</small>
                             </div>
-                            <a class="dropdown-item py-2" href="{{ path('app_info_personnel') }}">
+                            <a class="dropdown-item py-2" href="">
                                 <i class="fas fa-user me-2 text-primary"></i> Mon profil
                             </a>
                             <a class="dropdown-item py-2" href="#">
@@ -237,25 +202,25 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_home') }}">
+                    <a class="nav-link" href="">
                         <i class="fas fa-users"></i>
                         <span>Employé</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_compte') }}">
+                    <a class="nav-link" href="">
                         <i class="fas fa-user-cog"></i>
                         <span>Compte</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_listconge') }}">
+                    <a class="nav-link" href="">
                         <i class="fas fa-calendar-alt"></i>
                         <span>Congés</span>
                     </a>
                 </li>
                 <li class="nav-item"> 
-                    <a class="nav-link" href="{{ path('app_listavance') }}">
+                    <a class="nav-link" href="">
                         <i class="fas fa-file-alt"></i>
                         <span>Avance sur salaire</span>
                     </a>

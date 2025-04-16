@@ -284,47 +284,5 @@
 
 <!-- JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Graphique d'activité
-    const ctx = document.getElementById('activityChart').getContext('2d');
-    const activityChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: {{ congedate|raw }},
-            datasets: [{
-                label: "Demandes de congé",
-                backgroundColor: "rgba(255, 165, 0, 0.2)",
-                borderColor: "rgba(255, 165, 0, 1)",
-                borderWidth: 2,
-                pointBackgroundColor: "rgba(255, 165, 0, 1)",
-                data: {{ congecount|raw }},
-                tension: 0.3,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false,
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            }
-        }
-    });
-});
-</script>
+
 {% endblock %}
