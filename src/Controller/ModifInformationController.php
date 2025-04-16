@@ -2,80 +2,81 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\ModificationInformationRepository;
 use App\Entity\ModificationInformation;
 use App\Form\ModificationInformationType;
-class ModifInformationController extends AbstractController
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+class ModifInformationController extends AbstractDemandeController
 {
     #[Route('/modif/information', name: 'app_modif_information')]
     public function index(): Response
-    { $user = $this->getUser();
-        $info= $this->getDoctrine()->getManager();
-        $modification= $info->getRepository(ModificationInformation::class)->findByExampleField($user->getId());
-        return $this->render('modif_information/index.html.twig', [
-            'information' => $modification,
-        ]);
+    {
+        return $this->handleIndex('findByExampleField');
+    }
+    
+    protected function getIndexTemplate(): string
+    {
+        return 'modif_information/index.html.twig';
+    }
+    
+    protected function getEntityContextName(): string
+    {
+        return 'information';
     }
    
     #[Route('/supprime_info/{id}', name: 'app_supprime_information')]
-    function supprimer_info($id):Response
+    public function supprimer_info($id, EntityManagerInterface $em): Response
     {
-        $repo=$this->getDoctrine()->getRepository(ModificationInformation::class );
-        $info=$repo->find($id);
-        $em=$this->getDoctrine()->getManager();
-        $em->remove($info);
-        $em->flush();
-        return $this->redirectToRoute('app_modif_information');
+        return $this->handleDelete($id, $em, 'app_modif_information');
     }
-     /**
-     * @Route("/modifier_informatione/{id}",name="app_modifier_information")
-     */
-    public function modifier(\Symfony\Component\HttpFoundation\Request $request ,$id): Response
-    {
-        $info=$this->getDoctrine()->getRepository(ModificationInformation::class)->find($id);
-      
-        $form=$this->createForm(ModificationInformationType::class,$info);
-        
-        $form->handleRequest($request);
-        if($form->isSubmitted() )
-        {
-           
-            $em=$this->getDoctrine()->getManager();
-          
-            $em->persist($info);
-            $em->flush();
-            return $this->redirectToRoute("app_modif_information");
-    }
-    return $this->render('modif_information/demande.html.twig', [
-        'for'=>$form->createView(),
 
-    ]);
+    #[Route("/modifier_informatione/{id}", name: "app_modifier_information")]
+    public function modifier(Request $request, $id): Response
+    {
+        return $this->handleEdit($request, $id, 'app_modif_information');
     }
-    /**
-     * @Route("/ajoutemodification", name="app_ajoutemodification")
-     */
-    public function ajouter(\Symfony\Component\HttpFoundation\Request $request): Response
-    {   
-          $modification=new ModificationInformation();
-            $modification->setDatedemande(new \DateTime());
-            $modification->setEtat('en cours');
-             $modification->setRh($user = $this->getUser());
-            $form=$this->createForm(ModificationInformationType::class,$modification);
-           
-            $form->handleRequest($request); 
-            if($form->isSubmitted())
-            {
-                $modification_info=$this->getDoctrine()->getManager();
-                $modification_info->persist($modification);
-                $modification_info->flush();
-                return $this->redirectToRoute('app_modif_information');
-            }
-            return $this->render('modif_information/demande.html.twig', [
-                'for'=>$form->createView(),
-  
-            ]);
-        }
+    
+    protected function getFormTemplate(): string
+    {
+        return 'modif_information/demande.html.twig';
+    }
+
+    #[Route("/ajoutemodification", name: "app_ajoutemodification")]
+    public function ajouter(Request $request): Response
+    {
+        return $this->handleAdd($request, 'app_modif_information');
+    }
+
+    // Required abstract method implementations
+    protected function createNewEntity()
+    {
+        return new ModificationInformation();
+    }
+
+    protected function getFormType(): string
+    {
+        return ModificationInformationType::class;
+    }
+
+    protected function getEntityClass(): string
+    {
+        return ModificationInformation::class;
+    }
+
+    // In ModifInformationController.php
+protected function preEditPersist($entity, EntityManagerInterface $em): void
+{
+    // Add any pre-save logic here (e.g., update timestamps)
+    // Example:
+    // $entity->setUpdatedAt(new \DateTime());
+}
+
+    // Unused but required methods (for acceptance/rejection flows)
+    protected function updateEntityState($entity, string $successState): void {}
+    protected function createAcceptNotification($entity, EntityManagerInterface $em): void {}
+    protected function updateEntityOnReject($entity, string $rejectedState, EntityManagerInterface $em): void {}
+    protected function createRejectionNotification($entity, EntityManagerInterface $em): void {}
 }

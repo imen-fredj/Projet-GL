@@ -1,120 +1,199 @@
 {% extends 'baseEmp.html.twig' %}
 
-{% block title %}Demande de congé{% endblock %}
+{% block title %}Demande de congé
+{% endblock %}
 
 {% block body %}
-<style>
-    .page-title {
-        margin-bottom: 30px;
-        font-weight: bold;
-        color: #FF8C00;
-        font-family: Times;
-        border-bottom: 2px solid #FF8C00;
-        padding-bottom: 10px;
-        display: inline-block;
-    }
+	<style>
+		.btn-sm {
+			padding: 0.25rem 0.5rem;
+			font-size: 0.875rem;
+			border-radius: 0.2rem;
+		}
 
-    .btn-add {
-        background-color: #F5F5DC;
-        border: 1px solid #FF8C00;
-        color: #333;
-        margin-left: 20px;
-        transition: all 0.3s;
-    }
+		.btn-warning {
+			background-color: #ffc107;
+			border-color: #ffc107;
+			color: #212529;
+		}
 
-    .btn-add:hover {
-        background-color: #FF8C00;
-        color: white;
-    }
+		.btn-warning:hover {
+			background-color: #e0a800;
+			border-color: #d39e00;
+		}
 
-    .table-container {
-        background-color: white;
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        margin-top: 20px;
-    }
+		.btn-danger {
+			background-color: #dc3545;
+			border-color: #dc3545;
+		}
 
-    .table th {
-        background-color: #f8f9fa;
-        font-weight: 600;
-    }
+		.btn-danger:hover {
+			background-color: #c82333;
+			border-color: #bd2130;
+		}
+		.page-title {
+			margin-bottom: 30px;
+			font-weight: bold;
+			color: #FF8C00;
+			font-family: Times;
+			border-bottom: 2px solid #FF8C00;
+			padding-bottom: 10px;
+			display: inline-block;
+		}
 
-    .table img {
-        width: 40px;
-        height: 40px;
-        object-fit: cover;
-    }
+		.btn-add {
+			background-color: #F5F5DC;
+			border: 1px solid #FF8C00;
+			color: #333;
+			margin-left: 20px;
+			transition: all 0.3s;
+		}
 
-    .status-pending {
-        color: #FFA500;
-        font-weight: bold;
-    }
+		.btn-add:hover {
+			background-color: #FF8C00;
+			color: white;
+		}
 
-    .status-approved {
-        color: #28a745;
-        font-weight: bold;
-    }
+		.table-container {
+			background-color: white;
+			border-radius: 10px;
+			padding: 20px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+			margin-top: 20px;
+		}
 
-    .status-rejected {
-        color: #dc3545;
-        font-weight: bold;
-    }
-</style>
+		.table th {
+			background-color: #f8f9fa;
+			font-weight: 600;
+		}
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="page-title">Demande de congé</h2>
-        <a href="{{ path('app_ajoute') }}" class="btn btn-add">
-            <i class="fas fa-plus me-2"></i>Ajouter une demande
-        </a>
-    </div>
-    {% for label, messages in app.flashes %}
-    {% for message in messages %}
-        <div class="alert alert-{{ label }} alert-dismissible fade show m-3" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endfor %}
-{% endfor %}
+		.table img {
+			width: 40px;
+			height: 40px;
+			object-fit: cover;
+		}
 
-    <div class="card table-container">
-        <table class="table table-striped table-hover align-middle" id="myTable">
-            <thead class="table-light">
-                <tr>
-                    <th>Image</th>
-                    <th>CIN</th>
-                    <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>Date demande</th>
-                    <th>Date début</th>
-                    <th>Nb jours</th>
-                    <th>Date fin</th>
-                    <th>Motif</th>
-                    <th>Description</th>
-                    <th>Statut</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for Conge in cong %}
-                <tr>
-                    <td>
-                        <img src="{{ asset('pic/' ~ Conge.Rh.image) }}" class="rounded-circle" alt="Photo employé">
-                    </td>
-                    <td>{{ Conge.Rh.cin }}</td>
-                    <td>{{ Conge.Rh.nom }}</td>
-                    <td>{{ Conge.Rh.prenom }}</td>
-                    <td>{{ Conge.datedemande|date("d/m/Y") }}</td>
-                    <td>{{ Conge.datedebut|date("d/m/Y") }}</td>
-                    <td>{{ Conge.nbjour }}</td>
-                    <td>{{ Conge.datefin|date("d/m/Y") }}</td>
-                    <td>{{ Conge.Typeconge.type }}</td>
-                    <td>{{ Conge.description }}</td>
-                    <td class="status-{{ Conge.etat|lower }}">{{ Conge.etat }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
+		.status-pending {
+			color: #FFA500;
+			font-weight: bold;
+		}
+
+		.status-approved {
+			color: #28a745;
+			font-weight: bold;
+		}
+
+		.status-rejected {
+			color: #dc3545;
+			font-weight: bold;
+		}
+	</style>
+
+	<div class="container mt-4">
+		<div class="d-flex justify-content-between align-items-center mb-4">
+			<h2 class="page-title">Demande de congé</h2>
+			<a href="{{ path('app_ajoute') }}" class="btn btn-add">
+				<i class="fas fa-plus me-2"></i>Ajouter une demande
+			</a>
+		</div>
+		{% for label, messages in app.flashes %}
+			{% for message in messages %}
+				<div class="alert alert-{{ label }} alert-dismissible fade show m-3" role="alert">
+					{{ message }}
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+			{% endfor %}
+		{% endfor %}
+
+		<div class="card table-container">
+			<table class="table table-striped table-hover align-middle" id="myTable">
+				<thead class="table-light">
+					<tr>
+						<th>Image</th>
+
+						<th>Nom et Prénom</th>
+
+						<th>Date demande</th>
+						<th>Date début</th>
+						<th>Nb jours</th>
+						<th>Date fin</th>
+						<th>Motif</th>
+						<th>Description</th>
+						<th>Statut</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for Conge in cong %}
+						<tr>
+							<td>
+								<img src="{{ asset('pic/' ~ Conge.Rh.image) }}" class="rounded-circle" alt="Photo employé">
+							</td>
+
+							<td>{{ Conge.Rh.nom }}
+								{{ Conge.Rh.prenom }}</td>
+
+							<td>{{ Conge.datedemande|date("d/m/Y") }}</td>
+							<td>{{ Conge.datedebut|date("d/m/Y") }}</td>
+							<td>{{ Conge.nbjour }}</td>
+							<td>{{ Conge.datefin|date("d/m/Y") }}</td>
+							<td>{{ Conge.Typeconge.type }}</td>
+							<td>{{ Conge.description }}</td>
+							<td class="status-{{ Conge.etat|lower }}">{{ Conge.etat }}</td>
+							<td>
+								{% if Conge.etat == "en cours" %}
+									<!-- Bouton Modifier -->
+								<button class="btn btn-warning btn-sm me-2" 
+											data-bs-toggle="modal" 
+											data-bs-target="#editModal{{ Conge.id }}"
+											title="Modifier">
+										<i class="fas fa-edit"></i>
+									</button>
+
+								{% endif %}
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+{% for Conge in cong %}
+		<div class="modal fade" id="editModal{{ Conge.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ Conge.id }}" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header bg-warning text-white">
+						<h5 class="modal-title" id="editModalLabel{{ Conge.id }}">Confirmer la modification</h5>
+						<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<p>Vous êtes sur le point de modifier cette demande de congé :</p>
+						<ul>
+							<li>Date début: {{ Conge.datedebut|date("d/m/Y") }}</li>
+							<li>Date fin: {{ Conge.datefin|date("d/m/Y") }}</li>
+							<li>Type: {{ Conge.Typeconge.type }}</li>
+						</ul>
+						<p class="text-warning"><small>Voulez-vous vraiment continuer ?</small></p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+						<a href="{{ path('app_modifierconge', {'id': Conge.id}) }}" class="btn btn-warning">
+							<i class="fas fa-edit me-1"></i> Modifier
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+const deleteModal = document.getElementById('deleteModal');
+deleteModal.addEventListener('show.bs.modal', function (event) {
+const button = event.relatedTarget;
+const href = button.getAttribute('data-href');
+document.getElementById('confirmDelete').href = href;
+});
+});
+	</script>
 {% endblock %}

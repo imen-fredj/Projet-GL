@@ -14,17 +14,22 @@ class HomeresponsableController extends AbstractController
     {  $conge=$CongeRepository->countbydate();
         $congedate=[];
         $congecount=[];
-        
+         $user = $this->getUser();
+    $notifications = $manager->getRepository(Notification::class)
+        ->findBy(['recepteur' => $user, 'is_read' => 0]);
         foreach (  $conge as  $cg){
 
             $congedate[]=$cg['date'];
             $congecount[]=$cg['count'];
            
              }
-             
+           
+            
         return $this->render('homeresponsable/index.html.twig', [
             'congedate'=>json_encode($congedate),
             'congecount'=>json_encode($congecount),
+            'notifications' => $notifications
+
         ]);
     }
 }

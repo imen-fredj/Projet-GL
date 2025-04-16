@@ -76,7 +76,18 @@ public function findByRole(string $role)
         ->getQuery()
         ->getResult();
 }
-
+// Dans src/Repository/NotificationRepository.php
+public function findUnreadByUser($user, int $limit = null)
+{
+    return $this->createQueryBuilder('n')
+        ->where('n.recepteur = :user')
+        ->andWhere('n.is_read = 0')
+        ->orderBy('n.dateNotification', 'DESC')
+        ->setParameter('user', $user)
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+}
   //public function findOneBySomeField($value): ?Rh
   // {
   //     return $this->createQueryBuilder('r')

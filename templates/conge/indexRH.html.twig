@@ -163,7 +163,7 @@
                         <td>
                             {% if Conge.etat == "en cours" %}
                             <div class="btn-group" role="group" aria-label="Actions sur la demande de congé">
-            <a href="{{ path('accepte', {'id': Conge.id}) }}" 
+            <a href="{{ path('accepteconge', {'id': Conge.id}) }}" 
                class="btn btn-success btn-sm rounded-pill me-2" 
                data-bs-toggle="tooltip" 
                title="Accepter la demande">
@@ -173,7 +173,7 @@
                         
                             {% if Conge.etat == "en cours" %}
                                            <div class="btn-group" role="group" aria-label="Actions sur la demande de congé">
-            <a href="{{ path('refuse', {'id': Conge.id}) }}" 
+            <a href="{{ path('refuseconge', {'id': Conge.id}) }}" 
                class="btn btn-danger btn-sm rounded-pill" 
                data-bs-toggle="tooltip" 
                title="Refuser la demande">
