@@ -1,13 +1,13 @@
 <?php
 
-// src/Observer/NotificationSubscriber.php
+// src/Observer/NottificationObserver.php
 namespace App\Observer;
 
 use App\Entity\Notification;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Conge;
 
-class NotificationSubscriber implements SubscriberInterface
+class NottificationObserver implements ObserverInterface
 {
     private EntityManagerInterface $entityManager;
 
@@ -20,7 +20,7 @@ class NotificationSubscriber implements SubscriberInterface
     {
         $conge = $data['conge'];
         $message = $data['message'] ?? '';
-        
+
         switch ($event) {
             case 'conge.created':
                 $text = sprintf(
@@ -31,7 +31,7 @@ class NotificationSubscriber implements SubscriberInterface
                 );
                 $this->createNotification($conge, $text);
                 break;
-                
+
             case 'conge.accepted':
                 $text = sprintf(
                     "Votre congé a été accepté: %s",
@@ -39,7 +39,7 @@ class NotificationSubscriber implements SubscriberInterface
                 );
                 $this->createNotification($conge, $text);
                 break;
-                
+
             case 'conge.rejected':
                 $reason = $data['reason'] ?? '';
                 $text = sprintf(

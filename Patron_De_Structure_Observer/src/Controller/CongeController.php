@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Conge;
 use App\Form\CongeType;
 use App\Observer\CongeSubject;
-use App\Observer\NotificationSubscriber;
+use App\Observer\NottificationObserver;
 use App\Observer\LoggingSubscriber;
 use App\Repository\CongeRepository;
 use App\Repository\NotificationRepository;
@@ -19,10 +19,10 @@ class CongeController extends AbstractController
 {
     #[Route('/conge', name: 'app_conge')]
     public function index(CongeRepository $congeRepository): Response
-    {   
+    {
         $user = $this->getUser();
         $conges = $congeRepository->findBy(['rh' => $user]);
-        
+
         return $this->render('conge/index.html.twig', [
             'conges' => $conges,
         ]);
@@ -30,9 +30,9 @@ class CongeController extends AbstractController
 
     #[Route('/listconge', name: 'app_listconge')]
     public function indexconge(CongeRepository $congeRepository): Response
-    {  
+    {
         $conges = $congeRepository->findAll();
-   
+
         return $this->render('conge/indexRH.html.twig', [
             'conges' => $conges,
         ]);
@@ -42,7 +42,7 @@ class CongeController extends AbstractController
     public function ajouter(
         Request $request,
         EntityManagerInterface $manager,
-        NotificationSubscriber $notificationSubscriber,
+        NottificationObserver $NottificationObserver,
         LoggingSubscriber $loggingSubscriber,
         NotificationRepository $notificationRepository
     ): Response {
@@ -55,13 +55,13 @@ class CongeController extends AbstractController
         $form = $this->createForm(CongeType::class, $conge);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $manager->persist($conge);
             $manager->flush();
 
             // Notification avec le pattern Observer
             $congeSubject = new CongeSubject($conge);
-            $congeSubject->attach($notificationSubscriber);
+            $congeSubject->attach($NottificationObserver);
             $congeSubject->attach($loggingSubscriber);
             $congeSubject->demandeCreated();
 
@@ -84,11 +84,11 @@ class CongeController extends AbstractController
     public function accepter(
         $id,
         EntityManagerInterface $manager,
-        NotificationSubscriber $notificationSubscriber,
+        NottificationObserver $NottificationObserver,
         LoggingSubscriber $loggingSubscriber
     ): Response {
         $conge = $manager->getRepository(Conge::class)->find($id);
-        
+
         if (!$conge) {
             throw $this->createNotFoundException('Demande de congé non trouvée');
         }
@@ -98,7 +98,7 @@ class CongeController extends AbstractController
 
         // Notification avec le pattern Observer
         $congeSubject = new CongeSubject($conge);
-        $congeSubject->attach($notificationSubscriber);
+        $congeSubject->attach($NottificationObserver);
         $congeSubject->attach($loggingSubscriber);
         $congeSubject->demandeAccepted();
 
@@ -110,11 +110,11 @@ class CongeController extends AbstractController
         $id,
         Request $request,
         EntityManagerInterface $manager,
-        NotificationSubscriber $notificationSubscriber,
+        NottificationObserver $NottificationObserver,
         LoggingSubscriber $loggingSubscriber
     ): Response {
         $conge = $manager->getRepository(Conge::class)->find($id);
-        
+
         if (!$conge) {
             throw $this->createNotFoundException('Demande de congé non trouvée');
         }
@@ -124,7 +124,7 @@ class CongeController extends AbstractController
 
         // Notification avec le pattern Observer
         $congeSubject = new CongeSubject($conge);
-        $congeSubject->attach($notificationSubscriber);
+        $congeSubject->attach($NottificationObserver);
         $congeSubject->attach($loggingSubscriber);
         $congeSubject->demandeRejected('Raison non spécifiée');
 
@@ -135,14 +135,14 @@ class CongeController extends AbstractController
     public function delete($id, EntityManagerInterface $manager): Response
     {
         $conge = $manager->getRepository(Conge::class)->find($id);
-        
+
         if (!$conge) {
             throw $this->createNotFoundException('Demande de congé non trouvée');
         }
 
         $manager->remove($conge);
         $manager->flush();
-        
+
         $this->addFlash('success', 'Demande de congé supprimée avec succès');
         return $this->redirectToRoute('app_conge');
     }
@@ -155,7 +155,7 @@ class CongeController extends AbstractController
         NotificationRepository $notificationRepository
     ): Response {
         $conge = $manager->getRepository(Conge::class)->find($id);
-        
+
         if (!$conge) {
             throw $this->createNotFoundException('Demande de congé non trouvée');
         }

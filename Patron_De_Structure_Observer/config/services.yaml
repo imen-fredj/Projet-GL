@@ -1,10 +1,10 @@
 # config/services.yaml
 services:
   _defaults:
-        autowire: true
-        autoconfigure: true
-        
-  App\Observer\NotificationSubscriber:
+    autowire: true
+    autoconfigure: true
+
+  App\Observer\NottificationObserver:
     arguments: ["@doctrine.orm.entity_manager"]
     tags: ["app.conge_subscriber"]
 

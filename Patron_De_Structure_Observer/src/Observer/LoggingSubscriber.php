@@ -3,7 +3,7 @@
 // src/Observer/LoggingSubscriber.php
 namespace App\Observer;
 
-class LoggingSubscriber implements SubscriberInterface
+class LoggingSubscriber implements ObserverInterface
 {
     public function update(string $event, array $data = []): void
     {

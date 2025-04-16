@@ -6,7 +6,7 @@ use App\Entity\Conge;
 use App\Entity\Rh;
 use App\Entity\Typeconge;
 use App\Observer\CongeSubject;
-use App\Observer\NotificationSubscriber;
+use App\Observer\NottificationObserver;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -111,11 +111,11 @@ class TestObserverCommand extends Command
         ]);
 
         // 4. Initialisation de l'Observer
-        $subject = new CongeSubject($conge);
-        $subject->attach(new NotificationSubscriber($this->entityManager));
+        $subject = new CongeSubject();
+        $subject->attach(new NottificationObserver($this->entityManager));
 
         // Notification de création
-        $subject->demandeCreated();
+        $subject->demandeCreated($conge);
         $io->text('Notification envoyée au RH');
 
         // 5. Simulation de l'approbation
@@ -127,13 +127,13 @@ class TestObserverCommand extends Command
         $io->text('Notification d\'approbation envoyée à l\'employé');
 
         // 6. Résumé final
-        // $io->success('Test complété avec succès');
-        // $io->text('Vérifications à faire :');
-        // $io->listing([
-        //     sprintf('Table congé : vérifiez létat du congé ID %d', $conge->getId()),
-        //     sprintf('Table notification : 2 entrées attendues (pour les IDs %d et %d)', $rh->getId(), $employe->getId()),
-        //     'Fichier de logs : var/log/dev.log'
-        // ]);
+        $io->success('Test complété avec succès');
+        $io->text('Vérifications à faire :');
+        $io->listing([
+            sprintf('Table congé : vérifiez létat du congé ID %d', $conge->getId()),
+            sprintf('Table notification : 2 entrées attendues (pour les IDs %d et %d)', $rh->getId(), $employe->getId()),
+            'Fichier de logs : var/log/dev.log'
+        ]);
 
         return Command::SUCCESS;
     }
