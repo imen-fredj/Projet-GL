@@ -24,6 +24,13 @@ class RhRepository extends ServiceEntityRepository implements PasswordUpgraderIn
         parent::__construct($registry, Rh::class);
     }
 
+     // 1. Fetch pending accounts (replaces CompteController logic)
+     public function findPendingAccounts(): array {
+         return $this->findBy(['active'=>'False'],['nom' => 'asc']);
+     }
+
+ 
+
     public function save(Rh $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
