@@ -5,6 +5,9 @@ namespace App\Entity;
 use App\Repository\NotificationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Rh;
+use App\Entity\Conge;
+
 
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
 class Notification

@@ -25,13 +25,14 @@ class AvanceSalaireController extends AbstractController
     }
 
     #[Route('/listavance', name: 'app_listavance')]
-public function indexAvance(AvanceSalaireRepository $AvanceSalaireRepository): Response
-{
-    $avances = $AvanceSalaireRepository->findAll();
-    return $this->render('avance_salaire/indexRh.html.twig', [
-        'avances' => $avances,
-    ]);
-}
+    public function indexAvance(AvanceSalaireRepository $AvanceSalaireRepository): Response
+    {
+        $avances = $AvanceSalaireRepository->findAll();
+        return $this->render('avance_salaire/indexRh.html.twig', [
+            'avances' => $avances,
+        ]);
+    }
+    
      /**
      * @Route("/ajouteavance", name="app_avance")
      */

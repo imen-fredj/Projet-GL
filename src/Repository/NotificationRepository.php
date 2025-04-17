@@ -94,6 +94,16 @@ public function setRecepteur($recepteur): self
     $this->recepteur = $recepteur;
     return $this;
 }
+public function findUnreadByUser($user)
+{
+    return $this->createQueryBuilder('n')
+        ->where('n.recepteur = :user')
+        ->andWhere('n.is_read = 0')
+        ->setParameter('user', $user)
+        ->orderBy('n.date_notification', 'DESC')
+        ->getQuery()
+        ->getResult();
+}
 
 
 }
