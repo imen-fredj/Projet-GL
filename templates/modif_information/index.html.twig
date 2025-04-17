@@ -121,7 +121,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for ModificationInformation in information %}
+				{% for ModificationInformation in types %}
 					<tr>
 						<td>
 							<img src="{{ asset('pic/' ~ ModificationInformation.Rh.image) }}" alt="Employé">
@@ -130,7 +130,7 @@
 						<td>{{ ModificationInformation.Rh.nom }}</td>
 						<td>{{ ModificationInformation.Rh.prenom }}</td>
 						<td>{{ ModificationInformation.datedemande|date("d/m/Y") }}</td>
-						<td>{{ ModificationInformation.TypeModification.type }}</td>
+						<td>{{ ModificationInformation.typeModification.type }}</td>
 						<td class="status-{{ ModificationInformation.libelle|lower }}">{{ ModificationInformation.libelle }}</td>
 						<td>
 							<a href="{{ path('app_modifier_information', {'id': ModificationInformation.id}) }}" class="btn btn-warning btn-sm me-2" title="Modifier">

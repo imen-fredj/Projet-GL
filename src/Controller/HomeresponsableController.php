@@ -15,8 +15,8 @@ class HomeresponsableController extends AbstractController
         $congedate=[];
         $congecount=[];
          $user = $this->getUser();
-    $notifications = $manager->getRepository(Notification::class)
-        ->findBy(['recepteur' => $user, 'is_read' => 0]);
+    // $notifications = $manager->getRepository(Notification::class)
+    //     ->findBy(['recepteur' => $user, 'is_read' => 0]);
         foreach (  $conge as  $cg){
 
             $congedate[]=$cg['date'];
@@ -28,7 +28,7 @@ class HomeresponsableController extends AbstractController
         return $this->render('homeresponsable/index.html.twig', [
             'congedate'=>json_encode($congedate),
             'congecount'=>json_encode($congecount),
-            'notifications' => $notifications
+            // 'notifications' => $notifications
 
         ]);
     }

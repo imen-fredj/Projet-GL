@@ -40,7 +40,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for TypeModification in type %}
+                            {% for TypeModification in types %}
                                 <tr>
                                     <td>{{ TypeModification.id }}</td>
                                     <td>{{ TypeModification.type }}</td>
@@ -70,7 +70,7 @@
 </div>
 
 <!-- Modals de confirmation de suppression -->
-{% for TypeModification in type %}
+{% for TypeModification in types %}
 <div class="modal fade" id="deleteModal{{ TypeModification.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ TypeModification.id }}" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
