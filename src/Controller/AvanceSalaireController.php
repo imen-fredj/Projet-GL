@@ -11,6 +11,7 @@ use App\Entity\AvanceSalaire;
 use App\Entity\Notification;
 use App\Repository\NotificationRepository;
 use Symfony\Component\HttpFoundation\Request; 
+use App\Services\AvanceSalaireValidator; 
 class AvanceSalaireController extends AbstractController
 {
     #[Route('/avance/salaire', name: 'app_avance_salaire')]
@@ -32,31 +33,40 @@ public function indexAvance(AvanceSalaireRepository $AvanceSalaireRepository): R
         'avances' => $avances,
     ]);
 }
-     /**
-     * @Route("/ajouteavance", name="app_avance")
-     */
-    public function ajouter(\Symfony\Component\HttpFoundation\Request $request): Response
-    {   
-          $avance=new AvanceSalaire();
-          
-            $avance->setDatedemande(new \DateTime());
-            $avance->setEtat('en cours');
-             $avance->setRh($user = $this->getUser());
-            $form=$this->createForm(SalaireType::class,$avance);
-           
-            $form->handleRequest($request); 
-            if($form->isSubmitted())
-            {
-                $avance_salaiare=$this->getDoctrine()->getManager();
-                $avance_salaiare->persist($avance);
-                $avance_salaiare->flush();
-                return $this->redirectToRoute('app_avance_salaire');
-            }
-            return $this->render('avance_salaire/demande.html.twig', [
-                'for'=>$form->createView(),
-  
-            ]);
+/**
+ * @Route("/ajouteavance", name="app_avance")
+ */
+public function ajouter(Request $request, EntityManagerInterface $em, AvanceSalaireValidator $validator): Response
+{
+    $avance = new AvanceSalaire();
+    $user = $this->getUser();
+    
+    $form = $this->createForm(SalaireType::class, $avance);
+    $form->handleRequest($request);
+    
+    if($form->isSubmitted() && $form->isValid()) {
+        $dateAvance = $avance->getDateAvance() ?? new \DateTime();
+        
+        if(!$validator->canRequestAdvance($user, $dateAvance)) {
+            $this->addFlash('error', 'Vous ne pouvez pas demander plus de 2 avances par mois.');
+            return $this->redirectToRoute('app_avance_salaire');
         }
+        
+        try {
+            $em->persist($avance);
+            $em->flush();
+            $this->addFlash('success', 'Votre demande d\'avance a été enregistrée.');
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Une erreur est survenue lors de l\'enregistrement.');
+        }
+        
+        return $this->redirectToRoute('app_avance_salaire');
+    }
+    
+    return $this->render('avance_salaire/demande.html.twig', [
+        'for' => $form->createView(),
+    ]);
+}
         /**
      * @Route("/supprimeravance/{id}",name="app_supprimer")
      
