@@ -18,149 +18,95 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Security;
-
+use App\Services\CongeService;
+use App\Services\NotificationService;
 class CongeController extends AbstractController
 {
+    private $congeService;
+    private $notificationService;
+
+    public function __construct(CongeService $congeService, NotificationService $notificationService)
+    {
+        $this->congeService = $congeService;
+        $this->notificationService = $notificationService;
+    }
+
     #[Route('/conge', name: 'app_conge')]
     public function index(CongeRepository $congeRepository): Response
     {   
         $user = $this->getUser();
-        $type = $congeRepository->findByExampleField($user->getId());
+        $conges = $congeRepository->findByExampleField($user->getId());
+        
         return $this->render('conge/index.html.twig', [
-            'cong' => $type,
+            'cong' => $conges,
         ]);
     }
 
     #[Route('/listconge', name: 'app_listconge')]
-    public function indexconge(CongeRepository $congeRepository): Response
+    public function listConge(CongeRepository $congeRepository): Response
     {  
-        $type = $congeRepository->findAll();
+        $conges = $congeRepository->findAll();
+        
         return $this->render('conge/indexRH.html.twig', [
-            'cong' => $type,
+            'cong' => $conges,
         ]);
     }
+    #[Route('/ajouter', name: 'app_ajoute')]
+public function ajouter(
+    Request $request,
+    CongeService $congeService,
+    NotificationService $notificationService
+): Response {
+    $conge = new Conge();
+    $form = $this->createForm(CongeType::class, $conge);
+    $form->handleRequest($request); 
 
-    /**
-     * @Route("/ajouter", name="app_ajoute")
-     */
-    public function ajouter(Request $request, EntityManagerInterface $manager, NotificationRepository $notificationRepository): Response
-    {
-        $user = $this->getUser();
-        $conge = new Conge();
-        $conge->setDatedemande(new \DateTime());
-        $conge->setEtat('en cours');
-        $conge->setRh($user);
-
-        $form = $this->createForm(CongeType::class, $conge);
-        $form->handleRequest($request); 
-
-        if($form->isSubmitted() && $form->isValid()) {
-            $manager->persist($conge);
-            $manager->flush();
-
-            $notification = new Notification();
-            $notification->setText($user->getPrenom().' '.$user->getNom().' a demandé un congé');
-            $notification->setDateNotification(new \DateTime());
-            $notification->setRecepteur($user);
-            $notification->setDestinateur($user);
-            $notification->setConge($conge);
-            
-            $manager->persist($notification);
-            $manager->flush();
+    if($form->isSubmitted() && $form->isValid()) {
+        // Crée le congé
+        $congeService->createConge($conge);
         
-            $this->addFlash('success', 'Votre demande de congé a été envoyée');
-            return $this->redirectToRoute('app_conge');
-        }
-
-        return $this->render('conge/demande.html.twig', [
-            'for' => $form->createView(),
-        ]);
+        // Envoie la notification à tous les RH
+        $notificationService->notifyAllRh(
+            $conge, 
+            $this->getUser()->getPrenom().' '.$this->getUser()->getNom().' a demandé un congé'
+        );
+        
+        $this->addFlash('success', 'Votre demande de congé a été envoyée');
+        return $this->redirectToRoute('app_conge');
     }
 
-    /**
-     * @Route("/accepte/{id}", name="accepteconge")
-     */
-    public function accepter($id, EntityManagerInterface $manager): Response
-    {   
-        $conge = $this->getDoctrine()->getRepository(Conge::class)->find($id);
-        $conge->setEtat('Confirmer');
-        
-        $notification = new Notification();
-        $notification->setText('votre congé a été accepter');
-        $notification->setRecepteur($conge->getRh());
-        $currentUser = $this->getUser();
-        $notification->setDateNotification(new \DateTime()); 
-        $notification->setDestinateur($currentUser);
-        $notification->setConge($conge);
-        
-        $manager->persist($notification);
-        $manager->persist($conge);
-        $manager->flush();
-        
-        return $this->redirectToRoute('app_listconge');
-    }
-
-    /**
-     * @Route("/refuse/{id}", name="refuseconge")
-     */
-    public function refuser($id, EntityManagerInterface $manager): Response
-    {    
-        $conge = $this->getDoctrine()->getRepository(Conge::class)->find($id);
-        $conge->setEtat('rejeter');
-        
-        $notification = new Notification();
-        $notification->setText('votre congé a été refuser');
-        $notification->setIsRead(0);
-        $notification->setRecepteur($conge->getRh());
-        
-        $manager->persist($notification);
-        $manager->persist($conge);
-        $manager->flush();
-        
-        return $this->redirectToRoute('app_listconge');
-    }
-
-//  /**
-//  * @Route("/supprimer/{id}", name="app_supprime")
-//  */
-// public function delete($id, EntityManagerInterface $manager): Response
-// { dump($id);
-//     $cong = $manager->getRepository(Conge::class)->find($id);
-//     dump($cong);
-     
-//     if (!$cong) {
-//         $this->addFlash('error', 'Demande de congé non trouvée (ID: '.$id.')');
-//         return $this->redirectToRoute('app_conge');
-//     }
-//     $manager->remove($cong);
-//     $manager->flush();
-
-//     $this->addFlash('success', 'Suppression réussie.');
-//     return $this->redirectToRoute('app_conge');
-// }
-
-
-
-
-    /**
-     * @Route("/modifeconge/{id}", name="app_modifierconge")
-     */
-    public function modifier(Request $request, $id, EntityManagerInterface $em): Response
-    {
-        $conge = $this->getDoctrine()->getRepository(Conge::class)->find($id);
-        $form = $this->createForm(CongeType::class, $conge);
-        $form->handleRequest($request);
-        
-        if($form->isSubmitted() && $form->isValid()) {
-            $em->persist($conge);
-            $em->flush();
-            $this->addFlash('success', 'Demande modifiée avec succès');
-            return $this->redirectToRoute("app_conge");
-        }
-        
-        return $this->render('conge/demande.html.twig', [
-            'for' => $form->createView(),
-        ]);
-    }
-
+    return $this->render('conge/demande.html.twig', [
+        'for' => $form->createView(),
+    ]);
 }
+
+    #[Route('/accepte/{id}', name: 'accepteconge')]
+    public function accepter(Conge $conge): Response
+    {   
+        $this->congeService->acceptConge($conge);
+        $this->notificationService->createCongeNotification(
+            $conge, 
+            'Votre congé a été accepté',
+            1 // ou true selon votre logique métier
+        );
+        
+        return $this->redirectToRoute('app_listconge');
+    }
+    
+    #[Route('/refuse/{id}', name: 'refuseconge')]
+    public function refuser(Conge $conge): Response
+    {    
+        $this->congeService->rejectConge($conge);
+        $this->notificationService->createCongeNotification(
+            $conge, 
+            'Votre congé a été refusé',
+            0 // Marqué comme non lu
+        );
+        
+        return $this->redirectToRoute('app_listconge');
+    }
+   
+}
+
+
+   

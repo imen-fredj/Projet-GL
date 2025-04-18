@@ -13,10 +13,11 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request; 
 use App\Repository\NotificationRepository;
 use App\Entity\Notification;
+use App\Repository\CongeRepository;
 
 class HomeController extends AbstractController
 {#[Route('/home', name: 'app_home')]
-    public function index(Request $request, RhRepository $RhRepository, PaginatorInterface $paginator, NotificationRepository $NotificationRepository): Response
+    public function index(CongeRepository $congeRepository,Request $request, RhRepository $RhRepository, PaginatorInterface $paginator, NotificationRepository $NotificationRepository): Response
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
@@ -45,19 +46,21 @@ class HomeController extends AbstractController
                     }
                 }
                 
-                // Calcul dynamique du nombre d'éléments par page
-                $totalUsers = $em->getRepository(Rh::class)->count(['active' => 'True']);
-                $perPage = $totalUsers > 10 ? 10 : ($totalUsers > 0 ? $totalUsers : 1);
                 
-                // Pagination
-                $personne = $paginator->paginate(
-                    $query->getQuery(),
-                    $request->query->getInt('page', 1),
-                    $perPage
-                );
                 
-                return $this->render('home/index.html.twig', [
-                    'personne' => $personne,
+            
+                $congeStats = $congeRepository->countbydate();
+                $congedate = $congecount = [];
+                
+                foreach ($congeStats as $stat) {
+                    $congedate[] = $stat['date'];
+                    $congecount[] = $stat['count'];
+                }
+                
+                return $this->render('homeresponsable/index.html.twig', [
+                    
+                    'congedate' => json_encode($congedate),
+                    'congecount' => json_encode($congecount),
                 ]);
             }
         } 

@@ -9,6 +9,189 @@
     <script src="https://kit.fontawesome.com/7946598b52.js" crossorigin="anonymous"></script>
     {% block stylesheets %}{{ encore_entry_link_tags('app') }}{% endblock %}
     <style>
+        .notification-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background-color: rgba(255, 165, 0, 0.1);
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        position: relative;
+        transition: all 0.25s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .notification-btn:hover {
+        background-color: rgba(255, 165, 0, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .notification-badge {
+        font-size: 0.65rem;
+        padding: 0.25rem 0.45rem;
+        background-color: #dc3545;
+        border: 2px solid var(--bg-light);
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+    
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+    
+    .notification-menu {
+        width: 350px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        border: none;
+        margin-top: 10px;
+    }
+    
+    .notification-header {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .notification-list {
+        max-height: 350px;
+        overflow-y: auto;
+    }
+    
+    .notification-list::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .notification-list::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    
+    .notification-list::-webkit-scrollbar-thumb {
+        background: #ddd;
+        border-radius: 3px;
+    }
+    
+    .notification-list::-webkit-scrollbar-thumb:hover {
+        background: #ccc;
+    }
+    
+    .notification-item {
+        display: block;
+        padding: 15px;
+        border-bottom: 1px solid #f1f3f5;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        color: var(--text-dark);
+    }
+    
+    .notification-item:hover {
+        background-color: rgba(255, 165, 0, 0.05);
+    }
+    
+    .notification-item.unread {
+        background-color: rgba(13, 110, 253, 0.03);
+    }
+    
+    .notification-icon {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        flex-shrink: 0;
+    }
+    
+    .bg-success-light {
+        background-color: rgba(25, 135, 84, 0.1);
+    }
+    
+    .text-success {
+        color: #198754;
+    }
+    
+    .notification-content {
+        flex-grow: 1;
+        overflow: hidden;
+    }
+    
+    .notification-title {
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        line-height: 1.4;
+        color: #212529;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    
+    .notification-time {
+        font-size: 0.75rem;
+        color: #6c757d;
+    }
+    
+    .notification-indicator {
+        width: 8px;
+        height: 8px;
+        background-color: var(--primary-color);
+        border-radius: 50%;
+        display: block;
+    }
+    
+    .notification-empty {
+        padding: 30px 15px;
+        text-align: center;
+        color: #6c757d;
+    }
+    
+    .notification-empty i {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        opacity: 0.5;
+    }
+    
+    .notification-empty p {
+        margin-bottom: 0;
+        font-size: 0.9rem;
+    }
+    
+    .notification-footer {
+        padding: 12px;
+        text-align: center;
+        background-color: #f8f9fa;
+        border-top: 1px solid #e9ecef;
+    }
+    
+    .notification-footer a {
+        color: var(--primary-color);
+        font-size: 0.85rem;
+    }
+    
+    .notification-footer a:hover {
+        color: darken(var(--primary-color), 10%);
+    }
+    
+    /* Pour les boutons avec états différents des notifications */
+    .bg-primary-light { background-color: rgba(13, 110, 253, 0.1); }
+    .bg-warning-light { background-color: rgba(255, 193, 7, 0.1); }
+    .bg-info-light { background-color: rgba(13, 202, 240, 0.1); }
+    
+    .text-warning { color: #ffc107; }
+    .text-info { color: #0dcaf0; }
+
+
         :root {
             --primary-color: #ffa500;
             --bg-light: #F5F5DC;
@@ -303,49 +486,66 @@
 
         <div class="d-flex align-items-center">
             <!-- Notifications -->
-            <div class="dropdown me-3">
-                <button class="btn notification-btn position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-bell"></i>
-                    {% if notification is defined and notification|length > 0 %}
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            {{ notification|length }}
-                            <span class="visually-hidden">nouvelles notifications</span>
-                        </span>
-                    {% endif %}
-                </button>
-                <div class="dropdown-menu dropdown-menu-end notification-menu p-0">
-                    <div class="notification-header">
-                        <h6 class="mb-0 fw-bold">Notifications</h6>
-                    </div>
-                    <div class="notification-list">
-                        {% for Notification in notification|default([]) %}
-                            <a class="dropdown-item p-3 border-bottom notification-item" href="#">
-                                <div class="d-flex">
-                                    <div class="notification-icon bg-primary-light text-primary rounded-circle">
-                                        <i class="fas fa-envelope"></i>
-                                    </div>
-                                    <div class="notification-content">
-                                        <p class="mb-1 fw-semibold">{{ Notification.text }}</p>
-                                        <span class="small text-muted">{{ Notification.dateNotification|date("d/m/Y") }}</span>
-                                    </div>
-                                </div>
-                            </a>
-                        {% else %}
-                            <div class="p-3 text-center text-muted">
-                                <i class="fas fa-bell-slash mb-2"></i>
-                                <p class="mb-0">Aucune notification</p>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    {% if notification is defined and notification|length > 0 %}
-                        <div class="notification-footer">
-                            <a href="#" class="small fw-semibold text-decoration-none">Voir toutes les notifications</a>
+           <div class="dropdown me-3">
+    <button class="btn notification-btn position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-bell"></i>
+        {% if notification is defined and notification|length > 0 %}
+            <span class="position-absolute top-0 start-100 translate-middle badge notification-badge pulse">
+                {{ notification|length }}
+                <span class="visually-hidden">nouvelles notifications</span>
+            </span>
+        {% endif %}
+    </button>
+    <div class="dropdown-menu dropdown-menu-end notification-menu p-0">
+        <div class="notification-header d-flex justify-content-between align-items-center">
+            <h6 class="mb-0 fw-bold">Notifications</h6>
+            {% if notification is defined and notification|length > 0 %}
+                <a href="#" class="small text-decoration-none text-primary">Tout marquer comme lu</a>
+            {% endif %}
+        </div>
+        <div class="notification-list">
+            {% for Notification in notification|default([]) %}
+                <a class="notification-item {% if not Notification.isRead|default(false) %}unread{% endif %}" href="#">
+                    <div class="d-flex align-items-center">
+                        <div class="notification-icon {% if Notification.type is defined %}
+                            {% if Notification.type == 'message' %}bg-primary-light text-primary{% 
+                            elseif Notification.type == 'warning' %}bg-warning-light text-warning{% 
+                            elseif Notification.type == 'success' %}bg-success-light text-success{% 
+                            else %}bg-info-light text-info{% endif %}
+                        {% else %}bg-primary-light text-primary{% endif %} rounded-circle">
+                            <i class="fas {% if Notification.type is defined %}
+                                {% if Notification.type == 'message' %}fa-envelope{% 
+                                elseif Notification.type == 'warning' %}fa-exclamation-triangle{% 
+                                elseif Notification.type == 'success' %}fa-check-circle{% 
+                                elseif Notification.type == 'calendar' %}fa-calendar-alt{% 
+                                else %}fa-bell{% endif %}
+                            {% else %}fa-bell{% endif %}"></i>
                         </div>
-                    {% endif %}
+                        <div class="notification-content">
+                            <p class="notification-title mb-1">{{ Notification.text }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="notification-time">{{ Notification.dateNotification|date("d/m/Y H:i") }}</span>
+                                {% if not Notification.isRead|default(false) %}
+                                    <span class="notification-indicator"></span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            {% else %}
+                <div class="notification-empty">
+                    <i class="fas fa-bell-slash"></i>
+                    <p>Aucune notification</p>
                 </div>
+            {% endfor %}
+        </div>
+        {% if notification is defined and notification|length > 0 %}
+            <div class="notification-footer">
+                <a href="#" class="fw-semibold text-decoration-none">Voir toutes les notifications</a>
             </div>
-        
-
+        {% endif %}
+    </div>
+</div>
             <!-- Profil -->
             <div class="dropdown">
                 <button class="btn profile-btn d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
