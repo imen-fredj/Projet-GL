@@ -10,26 +10,30 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomeresponsableController extends AbstractController
 {
     #[Route('/homeresponsable', name: 'app_homeresponsable')]
-    public function index(CongeRepository $CongeRepository): Response
-    {  $conge=$CongeRepository->countbydate();
-        $congedate=[];
-        $congecount=[];
-         $user = $this->getUser();
-    $notifications = $manager->getRepository(Notification::class)
-        ->findBy(['recepteur' => $user, 'is_read' => 0]);
-        foreach (  $conge as  $cg){
-
-            $congedate[]=$cg['date'];
-            $congecount[]=$cg['count'];
-           
-             }
-           
-            
+    public function index(CongeRepository $congeRepository, NotificationRepository $notificationRepository): Response
+    {
+        $user = $this->getUser();
+        
+        $congeStats = $congeRepository->countbydate();
+        $congedate = $congecount = [];
+        $congeStats = $congeRepository->countbydate();
+        $congedate = $congecount = [];
+        
+        foreach ($congeStats as $stat) {
+            $congedate[] = $stat['date'];
+            $congecount[] = $stat['count'];
+        }
+        
+        // Notifications non lues pour le RH connecté
+        $notifications = $notificationRepository->findBy([
+            'recepteur' => $user,
+            'is_read' => false // Utilisation de false au lieu de 0
+        ], ['date_notification' => 'DESC']);
+        
         return $this->render('homeresponsable/index.html.twig', [
-            'congedate'=>json_encode($congedate),
-            'congecount'=>json_encode($congecount),
+            'congedate' => json_encode($congedate),
+            'congecount' => json_encode($congecount),
             'notifications' => $notifications
-
         ]);
     }
 }
