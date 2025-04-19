@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\NotificationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Conge;
 
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
 class Notification
@@ -21,7 +22,7 @@ class Notification
     #[ORM\Column]
     private ?int $is_read=0 ;
 
-    #[ORM\ManyToOne(targetEntity: Conge::class)]
+    #[ORM\ManyToOne(targetEntity: Conge::class, inversedBy: 'notification')] // Changed from 'notifications' to match Conge entity
     private ?Conge $conge = null;
     
     #[ORM\ManyToOne(targetEntity: Rh::class)]
