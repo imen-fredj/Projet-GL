@@ -190,5 +190,19 @@ class Conge
         return $this;
     }
 
+    ///////////////// OCL /////////////////////////////
+
+    public function isValid(): bool
+{
+    if (!$this->datedebut || !$this->datefin || !$this->nbjour) {
+        return false;
+    }
+
+    $diff = $this->datedebut->diff($this->datefin)->days + 1;
+
+    return $this->datedebut < $this->datefin && $this->nbjour <= 30 && $this->nbjour == $diff;
+}
+
+
 
 }

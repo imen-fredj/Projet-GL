@@ -51,9 +51,14 @@ public function ajouter(Request $request, EntityManagerInterface $manager, Notif
     $conge->setRh($user);
 
     $form = $this->createForm(CongeType::class, $conge);
-    $form->handleRequest($request); 
+    $form->handleRequest($request);
 
     if($form->isSubmitted() && $form->isValid()) {
+        if (!$conge->isValid()) {
+            $this->addFlash('error', 'Le congé est invalide. Vérifiez les dates et le nombre de jours (max 30).');
+            return $this->redirectToRoute('app_ajoute');
+        }
+
         $manager->persist($conge);
         $manager->flush();
 
@@ -61,22 +66,22 @@ public function ajouter(Request $request, EntityManagerInterface $manager, Notif
         $notification = new Notification();
         $notification->setText($user->getPrenom().' '.$user->getNom().' a demandé un congé');
         $notification->setDateNotification(new \DateTime());
-        $notification->setRecepteur($user); // À adapter selon votre logique
+        $notification->setRecepteur($user);
         $notification->setDestinateur($user);
         $notification->setConge($conge);
-        
+
         $manager->persist($notification);
         $manager->flush();
-    
+
         $this->addFlash('success', 'Votre demande de congé a été envoyée');
         return $this->redirectToRoute('app_conge');
     }
-
 
     return $this->render('conge/demande.html.twig', [
         'for' => $form->createView(),
     ]);
 }
+
     /**
      * @Route("/accepte/{id}",name="accepte")
      
